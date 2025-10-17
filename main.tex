@@ -1,324 +1,182 @@
-% Clean CV/Resume Template, by Bennet B <dev@bennet.cc>
-% CC0, Public-Domain
-% 
-% Permission is hereby granted, free of charge, to any person obtaining a copy
-% of this template and associated files (the "Template"), to deal
-% in the Template without restriction, including without limitation the rights
-% to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-% copies of the Template, and to permit persons to whom the Template is
-% furnished to do so, subject to the following conditions:
-%
-% The above copyright notice and this permission notice shall be included in all
-% copies or substantial portions of the Template.
-%
-% THE TEMPLATE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-% IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-% FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-% AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-% LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-% OUT OF OR IN CONNECTION WITH THE TEMPLATE OR THE USE OR OTHER DEALINGS IN THE
-% TEMPLATE.
-%
-% based on Modern CV by Habib Semouma
-% https://www.overleaf.com/latex/templates/modern-cv-slash-resume-template/vjrqdkpjckwj
-%
-% 
-\documentclass[oneside]{article}
+\documentclass[10pt,a4paper]{article}
 
-\usepackage{wallpaper}
 \usepackage{geometry}
-\usepackage[
-    unicode=true,
-    bookmarks=true,
-    bookmarksnumbered=false,
-    bookmarksopen=true,
-    bookmarksopenlevel=1,
-    breaklinks=false,
-    pdfborder={0 0 0},
-    backref=false,
-    colorlinks=false
-    ]{hyperref}
-\usepackage{lastpage}
-\usepackage{hyphenat}
-\usepackage{hyphsubst}
-\usepackage{tabularx}
-\usepackage{moresize}
-\usepackage[document]{ragged2e}
-% \usepackage{parskip}
-
-\usepackage[scaled]{helvet}
-\usepackage{fontawesome5}
-\usepackage[defaultfam,tabular,oldstyle]{montserrat}
-\usepackage[T1]{fontenc}
-\renewcommand*\oldstylenums[1]{{\fontfamily{Montserrat-TOsF}\selectfont #1}}
-
-\usepackage{titlesec}
-\usepackage{xcolor}
-\usepackage{tikz}
-
-\setlength{\parindent}{0pt}
-\titleformat{\section}{\normalfont}{}{0pt}{}
-
-\renewcommand{\arraystretch}{1}
-
-\setlength\fboxrule{0pt}
-\setlength\fboxsep{12pt}
-% \setlength{\parskip}{.5\baselineskip plus 2pt}
-% \renewcommand{\baselinestretch}{1.1}
-
-\titlespacing{\section}{0pt}{0.5ex plus .1ex minus .2ex}{0.5pc}
-
-\newcolumntype{Y}{>{\RaggedRight\arraybackslash}X}
-
-% Change PDF Meta Info here
-\hypersetup{
-    pdftitle={resume-Leopold-Chappuis},
-    pdfauthor={Léopold Chappuis},
-    pdfsubject={Resume}
-}
-
-% Paper size
 \geometry{
-    a4paper,
-    left=0pt,
-    right=0pt,
-    top=0pt,
-    bottom=0pt,
-    nohead,
-    % includefoot,
-    nomarginpar
+  top    = 0.35in,
+  bottom = 0.35in,
+  left   = 0.30in,
+  right  = 0.30in
 }
+\setlength\parindent{0pt}
+\setlength\parskip{1.5pt}
+\usepackage{multicol}
+\usepackage[T1]{fontenc}
+\usepackage{textcomp}
+\usepackage[sc]{mathpazo}
+\linespread{1.05}
 
-% Background Color of the Sidebar Column
-\definecolor{sidebg}{cmyk}{1, 0.02, 0, 0.56}
-% Background Color of the Main Column
-\definecolor{mainbg}{cmyk}{0, 0, 0.07, 0.04}
+\usepackage{enumitem}
+\setlist[itemize]{leftmargin=*,nosep}
 
-% Text Color of the Main Column
-\definecolor{maintext}{cmyk}{1, 0.02, 0, 0.8}
-% Text Color of the Sidebar Column
-\definecolor{sidetext}{cmyk}{0, 0, 0.07, 0.04}
+\usepackage{hyperref}
+\usepackage{titlesec}
 
-\pagecolor{mainbg}
+\titleformat{\section}
+  {\large\bfseries}
+  {}
+  {0pt}
+  {}
+  [\vspace{-0.6em}\rule{\linewidth}{0.4pt}\vspace{-0.4em}]
+
+\titleformat{\subsection}
+  {\bfseries}
+  {}
+  {0pt}
+  {}
+
+\titlespacing*{\section}{0pt}{1ex}{0.7ex}
+\titlespacing*{\subsection}{0pt}{0.5ex}{0.5ex}
 
 \begin{document}
-\setlength{\topskip}{0pt}\setlength{\footskip}{0pt}%
-\fcolorbox{red}{sidebg}{%
-    \begin{minipage}[t][\textheight-2\fboxsep-2\fboxrule][t]{\dimexpr0.35\textwidth-2\fboxrule-2\fboxsep\relax}
-        \color{sidetext}
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        % DESCRIPTION
-        {\bfseries\scshape\HUGE Léopold} \\
-        {\bfseries\scshape\Huge Chappuis} 
-        \vspace{.1cm} \\
-        Engineering Student \\
-        Computer Science\\
-        \vspace{.3cm}
-        \textit{I’m a passionate & curious student in computer science. I’m motivated to learn new technologies and skills and apply my current knowledge in a company. } 
-        \vspace{.3cm}
-        
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        % PERSONAL INFROMATION
-        \phantomsection{}
-        \addcontentsline{toc}{section}{Personal info}
-        \section*{\large Personal info}
-        \begin{tabularx}{\textwidth}{cY}
-            %\faStarOfLife{} & 20/02/2003 \\
-            \faPhone{}      & +33 6 24 88 42 96 \\
-            \faEnvelope{}   & \href{mailto:leopold@lchappuis.fr}{leopold@lchappuis.fr} \\
-            \faMapMarker{}  & 12 rue des coutures Saint-Quentin 02100 \\
-        \end{tabularx}
-        \vspace{.1cm} \\
-        \rule{\linewidth}{0.4pt} \\
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        % LINKS
-        \phantomsection{}
-        \addcontentsline{toc}{section}{Links}
-        \section*{\large Links}
-        \begin{tabular}{cl}
-        %    \faCode{}     & \href{https://example.com}{example.com}
-            \faGithub{}   & \href{https://github.com/leopoldch}{/leopoldch}\\
-            \faLinkedin{} & \href{https://www.linkedin.com/in/lchappuis/}{/lchappuis}\\
-        \end{tabular}
-        \vspace{10pt} \\
-        \rule{\linewidth}{0.4pt} \\
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        % Commitments
-        \phantomsection{}
-        \addcontentsline{toc}{section}{Commitments}
-        \section*{\large Commitments}
-        \begin{tabularx}{\textwidth}{cY}
-            &Elected student of the council of 
-            studies and university life (2023-2025)\\
-        \end{tabularx}
 
-\
-        \rule{\linewidth}{0.4pt} \\
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        %  SKILLS
-        \phantomsection{}
-        \addcontentsline{toc}{section}{Skills}
-        \section*{\large Skills}
-        \begin{tabularx}{\textwidth}{cY}
-            \faCode{}        & C++ \ \  C \ \  Python \ \  Numpy \ \  Pandas \ \  ScikitLearn \ \  Django \ \  Bash \ \  PHP \ \  Javascript \ \  ReactJS \ \  VueJS \ \  HTML \ \  CSS \ \  MySQL \ \  PSQL \ \  MongoDB \ \  PostgreSQL \ \  R \ \  Regex \ \  LaTeX \ \  MaterialUI \ \  SemanticUI   \\ \\
-            \faCogs{}        & Linux : \ \  Unix \ \  Debian \ \  Arch linux \ \  Fedora \ \  Manjaro \ \  Windows \ \ \ \ \ \ \ \ \ \  macOS \\ \\
-            \faLaptopCode{}  & Visual Studio Code \ \  Pycharm \ \  CLion \ \  Qt Creator \ \  PhpStorm \ \  Rstudio \\ \\
-            \faToolbox{}     & Docker \ \  Terraform \ \  Phpmyadmin  \ \ PhpLDAPadmin \ \  apache2 \& \  Nginx \ \  Git \ \  Postfix \ \  Sysadmin \ \  UML \ \  REST API
-        \end{tabularx}
-        \vspace{1pt} \\
-        \rule{\linewidth}{0.4pt}
+\begin{center}
+  {\Huge\textbf{Léopold Chappuis}}\\[0.3em]
+  Québec, Canada \;|\;
+  \href{mailto:leopold@chappuis.fr}{leopold@chappuis.fr} \;|\;
+  +33 6 24 88 42 96 \;|\;
+  \href{https://github.com/leopoldch}{github.com/leopoldch}
+\end{center}
 
-        % LANGUAGES
-        \phantomsection
-        \addcontentsline{toc}{section}{Languages}
-        \section*{\large Languages}
-        \begin{tabular}{cl}
-            \faLanguage{} & French (Mothertounge)\\
-            \faLanguage{} & English (Advanced High)\end{tabular}
-        \vspace{.1cm}
-        \\
-        \rule{\linewidth}{0.4pt}
-         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        % HOBBIES
-        \phantomsection
-        \addcontentsline{toc}{section}{Hobbies}
-        \section*{\large Hobbies}
-        \begin{tabularx}{\textwidth}{cY}
-            \faHeadset{} & light \& sound association (students events) \\
-            \faGamepad{} & video games \\
-            \faWalking{} & sports (volley-ball, running, ice-skating...) \\
-        \end{tabularx}
-        \vspace{.1cm}
-        \vfill
-        %{\tiny Grade scale: (1) very good $\approx$91\%-100\%, (2) good $\approx$81\%-90\%, (3) satisfactory $\approx$66\%-80\%, (4) sufficient $\approx$50\%-65\%, (5) failed $\approx$0\%-49\%}
-    \end{minipage}
-}%
-\hfill
-\fcolorbox{red}{mainbg}{%
-    \begin{minipage}[t][\dimexpr\textheight-2\fboxrule-2\fboxsep\relax][t]{\dimexpr0.65\textwidth-2\fboxrule-2\fboxsep\relax}
-        \color{maintext}
+\section*{Education}
 
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        % EDUCATION
-        \phantomsection{}
-        \addcontentsline{toc}{section}{Education}
-        \section*{\scshape\Large Education \rule{\linewidth}{0.4pt}}
-%
-        {\large \textbf{Engineering degree in computer science\\ 
-        Université de Technologie de Compiègne (UTC)}} \\
-        {\scshape\fontseries{light}\selectfont\footnotesize Compiègne, FRANCE \qquad Sept 2021 \textendash{} ongoing} \\
-        {Degree: engineering degree} { GPA: 3.44/4} \\[1ex]
-        %{\footnotesize } \\
+\textbf{Université de Technologie de Compiègne}, 
+\textit{Master of Science, Computer Science Engineering} 
+\hfill 2021 – 2026 (expected)
+GPA: 4/4
+\par\vspace{0.1em} 
+\textbf{Université Laval}, 
+\textit{Master of Science, Computer Science Engineering} 
+\hfill 2025 – 2027 (expected)
+\par\vspace{0.4em} 
+\textbf{Courses: }
+Algorithms \& Data Structures,
+Object-Oriented Design \& Programming,
+Operating Systems (UNIX),
+Computer Networks \& Security,
+Machine Learning,
+Artificial Intelligence,
+Database Systems,
+Distributed Systems,
+Embedded Systems,
+Probability \& Statistics,
+Automatic \& Robotics
+DevOps \& cloud-native applications,
+Software Quality, 
+Mobile networks
 
+\par\vspace{0.4em} 
+\section*{Experiences}
 
+\textbf{Fit Coding Challenge}, Mostar, Bosnia and Herzegovina \hfill May 2025  
+\begin{itemize}[leftmargin=*]
+  \item Competitive programming \textbf{(C++)} event focused on solving advanced algorithmic problems, similar to LeetCode challenges, under time constraints.
+\end{itemize}
 
-        % \\
-        
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        % EXPERIENCE
-        \phantomsection{}
-        \addcontentsline{toc}{section}{Experience}
-        \section*{\scshape\Large Experience \rule{\linewidth}{0.4pt}}
-%
-        {\large \textbf{Weezevent}} \\
-        {{\fontseries{medium}\selectfont Part time Job}} \\
-        {\scshape\fontseries{light}\selectfont\footnotesize June 2022 \textendash{} ongoing} 
-        \begin{itemize}
-            \setlength{\itemsep}{-1.5pt}
-            \item payment and access systems management in festivals.
-        \end{itemize}
+\textbf{1st Prize — UTAC Autonomous Vehicle Competition}, \textit{Utonome} — Linas-Montlhéry proving ground, France \hfill May 2025  
+\begin{itemize}[leftmargin=*]
+  \item Developed ACC, obstacle avoidance, and decision algorithms for an autonomous vehicle.  
+  \item Set up ROS-based real-time communication between server and vehicle.
+\end{itemize}
 
-        {\large \textbf{Student's federation IT service president}} \\
-        {{\fontseries{medium}\selectfont Association work}} \\
-        {\scshape\fontseries{light}\selectfont\footnotesize May 2022 \textendash{} May 2023} 
-        \begin{itemize}
-            \setlength{\itemsep}{-3pt}
-            \item Management of a system for 150 associations 
-            \begin{itemize}
-                \item Mail servers, Web hosting service, LDAP accounts ...
-            \end{itemize}
- 
-        \end{itemize}
+\textbf{Free Software Engineer Intern}, \textit{Savoir-faire Linux} — Montréal, Canada \hfill Aug 2024 – Feb 2025
+\begin{itemize}[leftmargin=*]
+  \item Core contributor to Jami (peer-to-peer DHT, C++).
+\end{itemize}
 
-        
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        % PROJECTS
-        \phantomsection{}
-        \addcontentsline{toc}{section}{Projects}
-        \section*{\scshape\Large Projects \rule{\linewidth}{0.4pt}}
+\textbf{Machine Learning Engineer}, \textit{Freelance} — Remote \hfill Feb 2024 - July 2025
 
-        {\large \textbf{Splendor Duel BoardGame in C++}} \\
-        {\scshape\fontseries{light}\selectfont\footnotesize Sept 2023 \textendash{} Jan 2024} 
-        \begin{itemize}
-            \setlength{\itemsep}{-3pt}
-            \item Development of a board game in C++ 17 \& Qt6 
-            \begin{itemize}
-                \item  Design patterns, Qt Creator, software engineering, JSON...
-            \end{itemize}
-        \end{itemize}
+\begin{itemize}
+  \item Worked for the Urban Research Department at the technical University of Compiègne. Urban traffic forecasting — TensorFlow, LSTM, SARIMAX.
+\end{itemize}
 
-        {\large \textbf{Predict breast cancer | Machine Learning}} \\
-        {\scshape\fontseries{light}\selectfont\footnotesize Sept 2023 \textendash{} Jan 2024} 
-        \begin{itemize}
-            \setlength{\itemsep}{-3pt}
-            \item Development of scripts to compare multiples classifiers.
-            \begin{itemize}
-                \item  Correlation Matrix, Naïves Bayes, Random Forest, KNN (neighbors), LDA, QDA, Logistic Regression, ROC curve...
-            \end{itemize}
-        \end{itemize}
-%
-        {\large \textbf{Website for an association}} \\
-        {\scshape\fontseries{light}\selectfont\footnotesize Oct 2023} 
-        \begin{itemize}
-            \setlength{\itemsep}{-3pt}
-            \item development of a dynamic website (inventory) 
-            \begin{itemize}
-                \item React.js, CSS, django, bearer tokens, rest API, Auth
-                \item Containerized the react app using docker, CI/CD
-            \end{itemize}
-        \end{itemize}
+\textbf{Sysadmin}, \textit{Freelance} — Remote \hfill Oct 2023 – Aug 2024
 
-        {\large \textbf{C Devlopment}} \\
-        {\scshape\fontseries{light}\selectfont\footnotesize Feb 2023 \textendash{} Jan 2024} 
-        \begin{itemize}
-            \setlength{\itemsep}{-3pt}
-            \item Complexity \& Algorithms
-            \begin{itemize}
-                \item  AVL Trees, optimize algorithms, Stack, queues...
-            \end{itemize}
-            \item  Forks, processes, pipes, syscalls, I/O ...
-        \end{itemize}
+\begin{itemize}
+  \item Hosted, secured and maintained Drupal \& WordPress infrastructures, applying CI/CD and GDPR best practices.
+\end{itemize}
 
-        {\large \textbf{Homemade Proxmox server}} \\
-        {\scshape\fontseries{light}\selectfont\footnotesize June 2023} 
-        \begin{itemize}
-            \setlength{\itemsep}{-3pt}
-            \item creation of personal cluster (multiples VMs, docker containers, LDAP)
-            \begin{itemize}
-                \item  host my website, store my data, host my database and my personal services as rstudio, lufi or to run python & js scripts 
-            \end{itemize}
-        \end{itemize}
+\textbf{IT Service President}, \textit{Students’ Federation, UTC} — Compiègne, France \hfill May 2022 – May 2023
 
-        {\large \textbf{Multiples discordBOT}} \\
-        {\scshape\fontseries{light}\selectfont\footnotesize 2022} 
-        \begin{itemize}
-            \setlength{\itemsep}{-3pt}
-            \item Youtube discordbot
-            \begin{itemize}
-                \item  listening to Youtube music in discord voice channels (FFMPEG, discord.py...)
-            \end{itemize}
-            \item Discordbot for an association 
-            \begin{itemize}
-                \item  transfer the received mails through a discord channel. Calendar feature (python, MySQL, Discord APIs)
-            \end{itemize}
-            
-        \end{itemize}
+\begin{itemize}
+  \item Managed an IT ecosystem for 150 associations (mail servers, web hosting, LDAP directory, monitoring).
+\end{itemize}
+
+\textbf{Event Technician}, \textit{Weezevent}  — France \hfill Jun 2022 – Present
+
+\begin{itemize}
+  \item Managed payment and access-control systems for large-scale festivals, ensuring real-time reliability.
+\end{itemize}
+
+\par\vspace{0.4em} 
+\section*{Projects}
+
+\textbf{AI – Board Game} \hfill 2024
+
+\begin{itemize}
+  \item Implemented Min-Max, Negamax, Alpha-Beta Pruning and Monte-Carlo Tree Search in Prolog to create a competitive AI.
+\end{itemize}
+
+\textbf{C Development (Algorithms \& Systems)} \hfill 2024
+
+\begin{itemize}
+  \item Built AVL trees, stacks, queues and IPC mechanisms (threads, semaphores, signals) to benchmark data-structure trade-offs.
+\end{itemize}
+
+\textbf{Board Game in C++17 \& Qt6} \hfill 2024
+
+\begin{itemize}
+  \item Designed an interactive board-game GUI, applying OOP and design-pattern best practices for maintainability.
+\end{itemize}
+
+\textbf{Breast-Cancer Prediction – Machine Learning} \hfill 2023
+
+\begin{itemize}
+  \item Compared classifiers (Correlation Matrix, Naïve Bayes, Random Forest, KNN, LDA/QDA, Logistic Regression) to maximise AUC.
+\end{itemize}
+
+\textbf{Inventory solution for an Association (React / Django)} \hfill 2023
+
+\begin{itemize}
+  \item Delivered a containerised inventory platform with JWT auth and GitHub Actions CI/CD.
+\end{itemize}
+
+\textbf{Proxmox Homelab Server} \hfill 2023
+
+\begin{itemize}
+  \item Built a private cluster with multiple VMs, Docker containers and central LDAP authentication.
+\end{itemize}
+
+\par\vspace{0.4em} 
+\section*{Technical Skills}
+
+\textbf{Programming Languages:} ROS, Rust, C, C++, Bash, Regex, Python (Django, Pandas, Numpy, Scikit-Learn), JavaScript (VueJS, ReactJS), PHP, Java
+
+\textbf{Tools:} Git, Kubernetes, Vagrant, Docker, CI/CD (Gitlab/Github Actions/Jenkins), Terraform, Proxmox, Linux
+
+\par\vspace{0.4em} 
+\section*{Leadership \& Community Involvement}
+
+\textbf{Elected Student Representative, Council of Studies and University Life} — UTC \hfill 2023 – 2025
+
+\textbf{Technical Light \& Sound Association (Student Events)} — UTC \hfill 2021 – 2023
+
+\textbf{International Experience: Lived in Africa for 8 years} \hfill 2003 – 2011
+\begin{itemize}
+  \item Developed strong adaptability and cross-cultural communication skills.
+\end{itemize}
 
 
-
-      
-        \vfill%
-        %{\hfill\small\fontseries{extralight}\selectfont Page \thepage of \pageref{LastPage}\hfill}%
-    \end{minipage}
-}%
+\par\vspace{0.4em} 
+\section*{Languages}
+French, English — Fluent
 \end{document}
