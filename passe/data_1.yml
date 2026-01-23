@@ -1,0 +1,59 @@
+personal:
+  name: Alexandre Eberhardt
+  title: Computer Engineering Student
+  location: Montreal, Quebec, Canada
+  email: ""
+  phone: ""
+  github: ""
+  github_url: ""
+
+education:
+  - school: Université de Technologie de Compiègne (UTC)
+    degree: Engineering Degree (Master’s level), Computer Science
+    dates: 2021 – Apr 2027
+    subtitle: "GPA: 4.66/5"
+
+  - school: Université Laval
+    degree: Master’s Degree in Computer Engineering
+    dates: Aug 2025 – Apr 2027
+    subtitle: "GPA: 4.17/4"
+
+experiences:
+  - title: Software Engineer Intern
+    company: Savoir-faire Linux — Montreal, Canada
+    dates: Aug 2024 – Feb 2025
+    highlights:
+      - "Engineer intern focused on modernizing the extension system for Jami (open-source P2P softphone)."
+      - "Integrated YOLOv11-seg for live video masking using ONNX Runtime in C++."
+      - "Implemented CUDA/cuDNN acceleration, reducing inference time from 0.3s to 0.01s."
+      - "Solved cross-platform compilation issues for Android (NDK) and macOS."
+      - "Built responsive QML interfaces for messaging features."
+      - "Followed strict code quality standards using Gerrit code reviews and CI pipelines."
+      - "Tech stack: C++17, Python, Qt/QML, OpenCV, ONNX, CUDA, CMake, Docker, Android Studio."
+
+projects: []
+
+skills:
+  languages: "C, C++, Python, Java, CUDA, QML"
+  tools: "Linux, Git & Code Review, ONNX Runtime, OpenCV, CMake, Docker, Android Studio"
+
+leadership:
+  - role: Student Vice-President of the Council for Studies and University Life
+    place: Université de Technologie de Compiègne (UTC)
+    dates: Nov 2023 – Nov 2025
+    highlights:
+      - "Elected representative of ~5,000 students on the university executive board."
+      - "Voted on academic reforms and campus life budgets."
+      - "Managed the distribution of grants for student initiatives."
+      - "Represented student concerns in high-level administrative decisions."
+
+  - role: Board Member & Secretary – Technology & Entrepreneurship Division
+    place: Pôle Technologie et Entrepreneuriat (PTE), UTC
+    dates: Feb 2025 – Aug 2025
+    highlights:
+      - "Updated association statutes (Loi 1901)."
+      - "Assisted student clubs with grant applications and administrative files."
+      - "Sat on the Board of Directors and the Grant Commission."
+      - "Managed meetings and internal communication."
+
+languages_spoken: "French, English — Fluent"

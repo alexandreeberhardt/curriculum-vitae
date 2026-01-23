@@ -1,0 +1,82 @@
+personal:
+  name: Alexandre Eberhardt
+  title: Étudiant en Génie Informatique | Double Diplôme UTC & Laval
+  location: Québec, Canada
+  email: alexandre.eberhardt@etu.utc.fr
+  phone: "+33 6 23 31 97 87"
+  github: github.com/alexandreeberhardt
+  github_url: https://github.com/alexandreeberhardt
+
+education:
+  - school: Université Laval
+    degree: Maîtrise en Génie Informatique (M.Sc)
+    dates: Août 2025 – Avr 2027
+    subtitle: "GPA: 4.17/4"
+    description: |
+      \textbf{Cours :} Vision par ordinateur, Robotique mobile, Algorithmes, Principes SOLID, Filtrage de Kalman, Complexité calculatoire.
+
+  - school: Université de Technologie de Compiègne (UTC)
+    degree: Diplôme d'Ingénieur en Informatique
+    dates: 2021 – Avr 2027
+    subtitle: "GPA: 4.66/5"
+    description: |
+      \textbf{Cours :} Algorithmique & Structures de données, Recherche opérationnelle & Optimisation, Sécurité informatique, Systèmes répartis, Systèmes temps réel & embarqué, IA & Programmation logique, Automatique pour la robotique.
+experiences:
+  - title: Stagiaire Ingénieur Logiciel
+    company: Savoir-faire Linux — Montréal, Canada
+    dates: Août 2024 – Fév 2025
+    highlights:
+      - "Modernisation du système d'extensions pour \\textbf{Jami} (Softphone P2P Open-source)."
+      - "Intégration de modèles Deep Learning \\textbf{(YOLOv11-seg)} pour le masquage vidéo avec \\textbf{ONNX Runtime} en C++."
+      - "Optimisation des performances : réduction du temps d'inférence (0.3s à 0.01s) via accélération matérielle \\textbf{NVIDIA CUDA/cuDNN}."
+      - "Résolution de problèmes de compilation cross-platform complexes (Android NDK, macOS) et développement d'interfaces réactives en \\textbf{QML}."
+
+projects:
+  - name: Arduino Jukebox
+    year: 2024
+    highlights:
+      - "Conception d'un système embarqué audio interactif en \\textbf{C++} sur Arduino."
+      - "Intégration de modules matériels : lecture de badges \\textbf{RFID} pour la sélection de musiques et gestion audio (DFPlayer)."
+      - "Développement de la logique de contrôle et gestion des interruptions matérielles."
+
+  - name: Mastery Bot Brawl Stars
+    year: 2024
+    highlights:
+      - "Développement d'un bot d'automatisation en \\textbf{Python} pour l'optimisation de la progression en jeu."
+      - "Implémentation de \\textbf{Vision par Ordinateur} (détection d'images/états) pour analyser l'écran en temps réel."
+      - "Programmation de scripts de simulation d'entrées (inputs) et gestion de la logique décisionnelle."
+
+  - name: Système de Suivi du Regard (Vision Numérique)
+    year: 2025
+    highlights:
+      - "Développement d'une interface de contrôle de souris par le regard pour personnes à mobilité réduite (cours GIF-7001)."
+      - "Conception d'un système stéréoscopique (2 caméras) avec calibration \\textbf{Thin Plate Spline} pour la projection précise du regard sur l'écran."
+      - "Utilisation de \\textbf{MediaPipe} pour l'extraction de repères faciaux et \\textbf{OpenCV/NumPy} pour le traitement d'images et la reconstruction 3D."
+      - "Implémentation de la détection de clignements volontaires pour le clic et interface \\textbf{Tkinter}."
+
+skills:
+  languages: "C++, C, Python, Java, JavaScript, CUDA, QML, SQL, MATLAB, Bash"
+  tools: "Git, Docker, CMake, ONNX Runtime, Android Studio, Linux, Qt, Gerrit"
+
+leadership:
+  - role: Vice-président Étudiant
+    place: UTC, Conseil des Études et de la Vie Universitaire
+    dates: Nov 2023 – Nov 2025
+    highlights:
+      - "Représentant élu de 5000 étudiants, vote sur les réformes académiques et budgets."
+      - "Gestion des subventions pour les initiatives étudiantes."
+  
+  - role: Secrétaire & Membre du Conseil d'Administration
+    place: Pôle Technologie et Entrepreneuriat (UTC)
+    dates: Fév 2025 – Août 2025
+    highlights:
+      - "Mise à jour des statuts (Loi 1901) et accompagnement administratif de 17 clubs étudiants."
+
+  - role: Président & Responsable Associatif
+    place: UTC (Diverses Associations)
+    dates: 2021 – 2025
+    highlights:
+      - "Président de la Bibliothèque de BD, Président du Club Culture Japonaise."
+      - "Responsable Informatique pour les événements de fin de semestre."
+
+languages_spoken: "Français (Natif), Anglais (Courant)"

@@ -66,25 +66,12 @@ leadership:
       - "Conseil Documentaire : Politiques de la bibliothèque et des ressources universitaires."
       - "Comité de Pilotage des Mobilités Durables."
 
-  - role: Candidat à la Présidence
-    place: Pôle Vie Du Campus (PVDC) — Fédération de 40 associations
-    dates: 2024
-    highlights:
-      - "Direction d'une équipe de campagne et élaboration d'un programme complet pour la vie étudiante."
-      - "Expérience en construction de coalitions et gestion des parties prenantes."
-
   - role: Président
     place: BDBDEC (Bibliothèque de Bandes Dessinées)
     dates: 2023 – 2024
     highlights:
       - "Gestion des opérations, du budget et de l'équipe de bénévoles."
       - "Anciennement Trésorier, assurant la santé financière et la conformité."
-
-  - role: Vice-Président
-    place: CID (Association d'Écriture Créative)
-    dates: 2023 – 2024
-    highlights:
-      - "Soutien au développement de l'association et à l'organisation d'événements."
 
   - role: Secrétaire
     place: SIMDE (Service Informatique des Associations)
@@ -98,5 +85,13 @@ leadership:
     highlights:
       - "Organisation d'événements culturels et d'ateliers pour la communauté universitaire."
       - "Anciennement Responsable Communication, développant l'adhésion et l'engagement."
+
+skills:
+  management: "Management d'équipes (jusqu'à 30 personnes), coordination de bénévoles, délégation et suivi de projets"
+  administratif: "Rédaction de dossiers de subventions, gestion budgétaire (jusqu'à 250k €), statuts associatifs (Loi 1901)"
+  communication: "Communication institutionnelle, relations publiques, animation de réseaux sociaux, création de supports visuels"
+  strategie: "Planification stratégique, construction de coalitions, négociation, gestion des parties prenantes"
+  evenementiel: "Organisation d'événements (jusqu'à 1 400 personnes), coordination de prestataires, logistique"
+  rh: "Recrutement et intégration de bénévoles, formation d'équipes, gestion des conflits"
 
 languages_spoken: "Français (Langue maternelle), Anglais (Courant)"
