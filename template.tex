@@ -47,7 +47,7 @@
   \href{\VAR{personal.github_url | escape_latex}}{\VAR{personal.github | escape_latex}}
 \end{center}
 
-\section*{Education}
+\section*{Formation}
 
 \BLOCK{for edu in education}
 \textbf{\VAR{edu.school | escape_latex}}, 
@@ -64,19 +64,7 @@
 \par\vspace{0.4em} 
 \BLOCK{endfor}
 
-\section*{Experiences}
-
-\BLOCK{for exp in experiences}
-\textbf{\VAR{exp.title | escape_latex}}, \textit{\VAR{exp.company | escape_latex}} \hfill \VAR{exp.dates | escape_latex}
-\begin{itemize}[leftmargin=*]
-  \BLOCK{for item in exp.highlights}
-  \item \VAR{item | escape_latex}
-  \BLOCK{endfor}
-\end{itemize}
-\par\vspace{0.4em} 
-\BLOCK{endfor}
-
-\section*{Projects}
+\section*{Projets}
 
 \BLOCK{for proj in projects}
 \textbf{\VAR{proj.name | escape_latex}} \hfill \VAR{proj.year | escape_latex}
@@ -85,17 +73,10 @@
   \item \VAR{item | escape_latex}
   \BLOCK{endfor}
 \end{itemize}
-\par\vspace{0.4em} 
+\par\vspace{0.4em}
 \BLOCK{endfor}
 
-\section*{Technical Skills}
-
-\textbf{Programming Languages:} \VAR{skills.languages | escape_latex}
-
-\textbf{Tools:} \VAR{skills.tools | escape_latex}
-
-\par\vspace{0.4em} 
-\section*{\VAR{'Leadership & Community Involvement' | escape_latex}}
+\section*{Leadership \& Engagement Associatif}
 
 \BLOCK{for lead in leadership}
 \textbf{\VAR{lead.role | escape_latex}} \BLOCK{if lead.place}— \VAR{lead.place | escape_latex} \BLOCK{endif} \hfill \VAR{lead.dates | escape_latex}
@@ -109,7 +90,7 @@
 \par\vspace{0.4em} 
 \BLOCK{endfor}
 
-\section*{Languages}
+\section*{Langues}
 \VAR{languages_spoken | escape_latex}
 
 \end{document}

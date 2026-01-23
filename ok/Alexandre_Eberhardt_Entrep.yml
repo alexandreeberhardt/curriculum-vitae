@@ -1,0 +1,102 @@
+personal:
+  name: Alexandre Eberhardt
+  title: Computer Engineering Student | Entrepreneur & Student Leader
+  location: Quebec, Canada
+  email: alexandre.eberhardt@etu.utc.fr
+  phone: "+33 6 23 31 97 87"
+  github: github.com/alexandreeberhardt
+  github_url: https://github.com/alexandreeberhardt
+
+education:
+  - school: Université Laval
+    degree: Master's in Computer Engineering (M.Sc)
+    dates: Aug 2025 – Apr 2027
+    subtitle: "GPA: 4.17/4"
+    description: ""
+
+  - school: Université de Technologie de Compiègne (UTC)
+    degree: Computer Engineering Degree
+    dates: 2021 – Apr 2027
+    subtitle: "GPA: 4.66/5"
+    description: ""
+
+projects:
+  - name: LueurVivante — Startup in Cognitive Development & Education
+    year: 2026 – Present
+    highlights:
+      - "Co-founder and CTO of an EdTech startup focused on cognitive development tools."
+      - "Leading technical strategy and product development."
+
+leadership:
+  - role: Student Vice-President
+    place: UTC, Council of Studies and University Life (CEVU)
+    dates: Nov 2023 – Nov 2025
+    highlights:
+      - "Elected representative of 5,000 students, voting on academic reforms and budgets."
+      - "One of 6 grand electors from UTC to the CNESER (National Council for Higher Education and Research)."
+      - "Alternate candidate to CNESER with a coalition of national student unions."
+
+  - role: Member of University Commissions
+    place: UTC
+    dates: 2023 – 2025
+    highlights:
+      - "CVEC Commission: Allocation of 250k EUR annual budget for student life initiatives."
+      - "FSDIE Commission: Grants for student projects and entrepreneurship."
+      - "Documentary Council: University library and resources policies."
+      - "Steering Committee for Sustainable Mobility."
+
+  - role: Secretary & Board Member
+    place: Technology and Entrepreneurship Cluster (PTE)
+    dates: Feb 2025 – Aug 2025
+    highlights:
+      - "Updated association statutes (French Law 1901) and provided administrative support for 17 student clubs."
+      - "Facilitated collaboration between technology and entrepreneurship-focused associations."
+
+  - role: Board Member
+    place: Student Federation (BDE) — 100k EUR annual budget
+    dates: Feb 2025 – Aug 2025
+    highlights:
+      - "Participated in grant allocation decisions for student associations."
+      - "Contributed to strategic planning for campus-wide events and initiatives."
+
+  - role: Candidate for President
+    place: Campus Life Cluster (PVDC) — Federation of 40 associations
+    dates: 2024
+    highlights:
+      - "Led a campaign team and developed a comprehensive program for student life improvement."
+      - "Gained experience in coalition building and stakeholder management."
+
+  - role: President
+    place: BDBDEC (Comic Book Library Association)
+    dates: 2023 – 2024
+    highlights:
+      - "Managed association operations, budget, and team of volunteers."
+      - "Previously served as Treasurer, ensuring financial health and compliance."
+
+  - role: President
+    place: Japon'UTC (Japanese Culture Club)
+    dates: 2022 – 2023
+    highlights:
+      - "Organized cultural events and workshops for the university community."
+      - "Previously served as Communications Manager, growing membership and engagement."
+
+  - role: Vice-President
+    place: CID (Creative Writing Association)
+    dates: 2023 – 2024
+    highlights:
+      - "Supported association development and event organization."
+
+  - role: IT Manager & Executive Board Member
+    place: End-of-Semester Party (1,400 attendees)
+    dates: 2025
+    highlights:
+      - "Managed technical infrastructure for large-scale student event."
+      - "Coordinated with vendors and ensured smooth event operations."
+
+  - role: Secretary
+    place: SIMDE (IT Services for Student Associations)
+    dates: 2023 – 2024
+    highlights:
+      - "Provided administrative support for the IT infrastructure serving all student associations."
+
+languages_spoken: "French (Native), English (Fluent)"

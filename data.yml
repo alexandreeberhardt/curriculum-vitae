@@ -1,7 +1,7 @@
 personal:
   name: Alexandre Eberhardt
-  title: Computer Engineering Student | Dual Degree UTC & Laval
-  location: Quebec, Canada
+  title: Étudiant Ingénieur Informatique | Entrepreneur & Leader Étudiant
+  location: Québec, Canada
   email: alexandre.eberhardt@etu.utc.fr
   phone: "+33 6 23 31 97 87"
   github: github.com/alexandreeberhardt
@@ -9,74 +9,94 @@ personal:
 
 education:
   - school: Université Laval
-    degree: Master's in Computer Engineering (M.Sc)
-    dates: Aug 2025 – Apr 2027
-    subtitle: "GPA: 4.17/4"
-    description: |
-      \textbf{Courses:} Computer Vision, Mobile Robotics, Algorithms, SOLID Principles, Kalman Filtering, Computational Complexity.
+    degree: Maîtrise en Génie Informatique (M.Sc)
+    dates: Août 2025 – Avr 2027
+    subtitle: "GPA : 4.17/4"
+    description: ""
 
   - school: Université de Technologie de Compiègne (UTC)
-    degree: Computer Engineering Degree
-    dates: 2021 – Apr 2027
-    subtitle: "GPA: 4.66/5"
-    description: |
-      \textbf{Courses:} Algorithms & Data Structures, Operational Research & Optimization, Computer Security, Distributed Systems, Real-time & Embedded Systems, AI & Logic Programming, Control Systems for Robotics.
-experiences:
-  - title: Software Engineer Intern
-    company: Savoir-faire Linux — Montreal, Canada
-    dates: Aug 2024 – Feb 2025
-    highlights:
-      - "Modernization of the extension system for \\textbf{Jami} (Open-source P2P Softphone)."
-      - "Integration of Deep Learning models \\textbf{(YOLOv11-seg)} for video masking with \\textbf{ONNX Runtime} in C++."
-      - "Performance optimization: inference time reduction (0.3s to 0.01s) via \\textbf{NVIDIA CUDA/cuDNN} hardware acceleration."
-      - "Resolution of complex cross-platform compilation issues (Android NDK, macOS) and development of reactive interfaces in \\textbf{QML}."
+    degree: Diplôme d'Ingénieur en Informatique
+    dates: 2021 – Avr 2027
+    subtitle: "GPA : 4.66/5"
+    description: ""
 
 projects:
-  - name: Arduino Jukebox
-    year: 2024
+  - name: LueurVivante — Startup en Développement Cognitif & Éducation
+    year: 2026 – Présent
     highlights:
-      - "Design of an interactive audio embedded system in \\textbf{C++} on Arduino."
-      - "Integration of hardware modules: \\textbf{RFID} badge reading for music selection and audio management (DFPlayer)."
-      - "Development of control logic and hardware interrupt management."
-
-  - name: Mastery Bot Brawl Stars
-    year: 2024
-    highlights:
-      - "Development of an automation bot in \\textbf{Python} to optimize game progression."
-      - "Implementation of \\textbf{Computer Vision} (image/state detection) for real-time screen analysis."
-      - "Programming of input simulation scripts and decision-making logic."
-
-  - name: Eye Tracking System (Computer Vision)
-    year: 2025
-    highlights:
-      - "Development of an eye-controlled mouse interface for people with reduced mobility (Course GIF-7001)."
-      - "Design of a stereoscopic system (2 cameras) with \\textbf{Thin Plate Spline} calibration for precise gaze projection on screen."
-      - "Use of \\textbf{MediaPipe} for facial landmark extraction and \\textbf{OpenCV/NumPy} for image processing and 3D reconstruction."
-      - "Implementation of voluntary blink detection for clicking and \\textbf{Tkinter} interface."
-
-skills:
-  languages: "C++, C, Python, Java, JavaScript, CUDA, SQL, MATLAB, Rust, QML"
-  tools: "Git, Docker, CMake, ONNX Runtime, Android Studio, Linux, Qt, Gerrit"
+      - "Co-fondateur et CTO d'une startup EdTech spécialisée dans les outils de développement cognitif."
+      - "Direction de la stratégie technique et du développement produit."
 
 leadership:
-  - role: Student Vice-President
-    place: UTC, Council of Studies and University Life
+  - role: Secrétaire & Membre du Bureau
+    place: Pôle Technologie et Entrepreneuriat (PTE)
+    dates: Fév 2025 – Août 2025
+    highlights:
+      - "Mise à jour des statuts associatifs (Loi 1901) et support administratif pour 17 clubs étudiants."
+      - "Facilitation de la collaboration entre associations orientées technologie et entrepreneuriat."
+
+  - role: Membre du Conseil d'Administration
+    place: Fédération Étudiante (BDE) — Budget annuel de 100k €
+    dates: Fév 2025 – Août 2025
+    highlights:
+      - "Participation aux décisions d'attribution de subventions pour les associations étudiantes."
+      - "Contribution à la planification stratégique des événements campus."
+
+  - role: Responsable Informatique & Membre du Bureau Restreint
+    place: Soirée des Finaux (1 400 participants)
+    dates: 2025
+    highlights:
+      - "Gestion de l'infrastructure technique pour un événement étudiant de grande envergure."
+      - "Coordination avec les prestataires et supervision du bon déroulement de l'événement."
+
+  - role: Vice-Président Étudiant
+    place: UTC, Conseil des Études et de la Vie Universitaire (CEVU)
     dates: Nov 2023 – Nov 2025
     highlights:
-      - "Elected representative of 5,000 students, voting on academic reforms and budgets."
-      - "Management of grants for student initiatives."
-  
-  - role: Secretary & Board Member
-    place: Technology and Entrepreneurship Cluster (UTC)
-    dates: Feb 2025 – Aug 2025
-    highlights:
-      - "Updated statutes (Law 1901) and provided administrative support for 17 student clubs."
+      - "Représentant élu de 5 000 étudiants, votant sur les réformes académiques et les budgets."
+      - "Grand électeur UTC au CNESER (Conseil National de l'Enseignement Supérieur et de la Recherche)."
+      - "Candidat suppléant au CNESER avec une coalition de syndicats étudiants nationaux."
 
-  - role: President & Association Manager
-    place: UTC (Various Associations)
-    dates: 2021 – 2025
+  - role: Membre de Commissions Universitaires
+    place: UTC
+    dates: 2023 – 2025
     highlights:
-      - "President of the Comic Book Library, President of the Japanese Culture Club."
-      - "IT Manager for end-of-semester events."
+      - "Commission CVEC : Attribution d'un budget annuel de 250k € pour les initiatives de vie étudiante."
+      - "Commission FSDIE : Subventions pour projets étudiants et entrepreneuriat."
+      - "Conseil Documentaire : Politiques de la bibliothèque et des ressources universitaires."
+      - "Comité de Pilotage des Mobilités Durables."
 
-languages_spoken: "French (Native), English (Fluent)"
+  - role: Candidat à la Présidence
+    place: Pôle Vie Du Campus (PVDC) — Fédération de 40 associations
+    dates: 2024
+    highlights:
+      - "Direction d'une équipe de campagne et élaboration d'un programme complet pour la vie étudiante."
+      - "Expérience en construction de coalitions et gestion des parties prenantes."
+
+  - role: Président
+    place: BDBDEC (Bibliothèque de Bandes Dessinées)
+    dates: 2023 – 2024
+    highlights:
+      - "Gestion des opérations, du budget et de l'équipe de bénévoles."
+      - "Anciennement Trésorier, assurant la santé financière et la conformité."
+
+  - role: Vice-Président
+    place: CID (Association d'Écriture Créative)
+    dates: 2023 – 2024
+    highlights:
+      - "Soutien au développement de l'association et à l'organisation d'événements."
+
+  - role: Secrétaire
+    place: SIMDE (Service Informatique des Associations)
+    dates: 2023 – 2024
+    highlights:
+      - "Membre du bureau restreint pour l'infrastructure informatique au service de toutes les associations étudiantes."
+
+  - role: Président
+    place: Japon'UTC (Club de Culture Japonaise)
+    dates: 2022 – 2023
+    highlights:
+      - "Organisation d'événements culturels et d'ateliers pour la communauté universitaire."
+      - "Anciennement Responsable Communication, développant l'adhésion et l'engagement."
+
+languages_spoken: "Français (Langue maternelle), Anglais (Courant)"
