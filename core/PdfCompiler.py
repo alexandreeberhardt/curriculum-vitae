@@ -24,7 +24,7 @@ class PdfCompiler:
         ]
 
         try:
-            subprocess.run(cmd, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
+            subprocess.run(cmd, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             print("✅ PDF generated successfully.")
             
             if clean:
@@ -33,7 +33,17 @@ class PdfCompiler:
         except subprocess.CalledProcessError as e:
             print("❌ Error during LaTeX compilation.")
             if e.stderr:
-                print(e.stderr.decode('utf-8', errors='ignore')[-500:]) # Last 500 chars
+                print(e.stderr.decode('utf-8', errors='ignore')[-500:])
+            # Read the .log file for detailed LaTeX errors
+            log_file = self.tex_file.with_suffix('.log')
+            if log_file.exists():
+                log_content = log_file.read_text(errors='ignore')
+                # Extract error lines from log
+                error_lines = [line for line in log_content.split('\n')
+                               if line.startswith('!') or 'Error' in line or 'Fatal' in line]
+                if error_lines:
+                    print("LaTeX errors found:")
+                    print('\n'.join(error_lines[:20]))  # First 20 error lines
             raise RuntimeError("LaTeX compilation failed.")
 
     def _clean_auxiliary_files(self):
