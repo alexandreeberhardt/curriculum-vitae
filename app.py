@@ -739,6 +739,16 @@ Analyse le texte du CV fourni et retourne un JSON avec la structure exacte suiva
       "title": "Languages",
       "isVisible": true,
       "items": "Français (natif), Anglais (courant)"
+    },
+    {
+      "id": "sec-7",
+      "type": "custom",
+      "title": "Centres d'intérêt",
+      "isVisible": true,
+      "items": [
+        {"title": "Sport", "subtitle": "", "dates": "", "highlights": ["Football en club", "Course à pied"]},
+        {"title": "Musique", "subtitle": "", "dates": "", "highlights": ["Piano depuis 10 ans"]}
+      ]
     }
   ],
   "template_id": "harvard"
@@ -749,10 +759,14 @@ IMPORTANT:
 - N'ajoute que les liens présents dans le CV
 - Pour "skills", items est un OBJET avec "languages" et "tools" (pas un array)
 - Pour "languages", items est une STRING simple
-- Pour les autres types, items est un ARRAY d'objets
+- Pour "custom", items est un ARRAY d'objets avec: title, subtitle (optionnel), dates (optionnel), highlights (array de strings)
+- Pour les autres types (education, experiences, projects, leadership), items est un ARRAY d'objets selon leur structure respective
+- Les types de section connus sont: summary, education, experiences, projects, skills, leadership, languages
+- Pour TOUTE autre section du CV (Centres d'intérêt, Publications, Certifications, Bénévolat, Hobbies, Récompenses, etc.), utilise type="custom" avec le titre original de la section
 - Génère des IDs uniques pour chaque section (sec-1, sec-2, etc.)
 - Si une info n'est pas dans le CV, utilise une chaîne vide "" ou un array vide []
-- N'invente pas d'informations, extrais uniquement ce qui est présent"""
+- N'invente pas d'informations, extrais uniquement ce qui est présent
+- EXTRAIS TOUTES les sections présentes dans le CV, même celles qui ne correspondent pas aux types standards"""
 
             # Streaming depuis OpenAI (async)
             stream = await client.chat.completions.create(
