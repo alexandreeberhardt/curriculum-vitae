@@ -1,7 +1,11 @@
 """Authentication routes for the CV SaaS application."""
+import os
 from typing import Annotated
+from urllib.parse import urlencode
 
+import httpx
 from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi.responses import RedirectResponse
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 
@@ -11,6 +15,14 @@ from database.db_config import get_db
 from database.models import User
 
 router = APIRouter(prefix="/api/auth", tags=["Authentication"])
+
+# Google OAuth2 Configuration
+GOOGLE_CLIENT_ID = os.environ.get("GOOGLE_CLIENT_ID", "")
+GOOGLE_CLIENT_SECRET = os.environ.get("GOOGLE_CLIENT_SECRET", "")
+GOOGLE_REDIRECT_URI = os.environ.get("GOOGLE_REDIRECT_URI", "")
+GOOGLE_AUTH_URL = "https://accounts.google.com/o/oauth2/v2/auth"
+GOOGLE_TOKEN_URL = "https://oauth2.googleapis.com/token"
+GOOGLE_USERINFO_URL = "https://www.googleapis.com/oauth2/v2/userinfo"
 
 
 @router.post("/register", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
@@ -86,3 +98,126 @@ async def login(
     access_token = create_access_token(data={"sub": str(user.id), "email": user.email})
 
     return Token(access_token=access_token)
+
+
+@router.get("/google/login")
+async def google_login() -> RedirectResponse:
+    """Redirect to Google OAuth2 login page.
+
+    Returns:
+        Redirect to Google's OAuth2 consent page.
+    """
+    if not GOOGLE_CLIENT_ID or not GOOGLE_REDIRECT_URI:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Google OAuth2 not configured",
+        )
+
+    params = {
+        "client_id": GOOGLE_CLIENT_ID,
+        "redirect_uri": GOOGLE_REDIRECT_URI,
+        "response_type": "code",
+        "scope": "openid email profile",
+        "access_type": "offline",
+        "prompt": "select_account",
+    }
+
+    auth_url = f"{GOOGLE_AUTH_URL}?{urlencode(params)}"
+    return RedirectResponse(url=auth_url)
+
+
+@router.get("/google/callback")
+async def google_callback(
+    code: str,
+    db: Annotated[Session, Depends(get_db)],
+) -> RedirectResponse:
+    """Handle Google OAuth2 callback.
+
+    Args:
+        code: Authorization code from Google.
+        db: Database session.
+
+    Returns:
+        Redirect to frontend with JWT token.
+    """
+    if not GOOGLE_CLIENT_ID or not GOOGLE_CLIENT_SECRET or not GOOGLE_REDIRECT_URI:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Google OAuth2 not configured",
+        )
+
+    # Exchange authorization code for tokens
+    async with httpx.AsyncClient() as client:
+        token_response = await client.post(
+            GOOGLE_TOKEN_URL,
+            data={
+                "client_id": GOOGLE_CLIENT_ID,
+                "client_secret": GOOGLE_CLIENT_SECRET,
+                "code": code,
+                "grant_type": "authorization_code",
+                "redirect_uri": GOOGLE_REDIRECT_URI,
+            },
+        )
+
+        if token_response.status_code != 200:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Failed to exchange authorization code",
+            )
+
+        token_data = token_response.json()
+        access_token = token_data.get("access_token")
+
+        # Get user info from Google
+        userinfo_response = await client.get(
+            GOOGLE_USERINFO_URL,
+            headers={"Authorization": f"Bearer {access_token}"},
+        )
+
+        if userinfo_response.status_code != 200:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Failed to get user info from Google",
+            )
+
+        userinfo = userinfo_response.json()
+
+    google_id = userinfo.get("id")
+    email = userinfo.get("email")
+
+    if not google_id or not email:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid user info from Google",
+        )
+
+    # Find or create user
+    user = db.query(User).filter(User.google_id == google_id).first()
+
+    if not user:
+        # Check if email already exists (user registered with password)
+        existing_user = db.query(User).filter(User.email == email).first()
+        if existing_user:
+            # Link Google account to existing user
+            existing_user.google_id = google_id
+            db.commit()
+            user = existing_user
+        else:
+            # Create new user
+            user = User(
+                email=email,
+                google_id=google_id,
+                password_hash=None,
+            )
+            db.add(user)
+            db.commit()
+            db.refresh(user)
+
+    # Create JWT token
+    jwt_token = create_access_token(data={"sub": str(user.id), "email": user.email})
+
+    # Redirect to frontend with token
+    frontend_url = os.environ.get("FRONTEND_URL", "https://sivee.pro")
+    redirect_url = f"{frontend_url}?token={jwt_token}"
+
+    return RedirectResponse(url=redirect_url)

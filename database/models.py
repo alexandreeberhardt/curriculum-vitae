@@ -17,7 +17,8 @@ class User(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     email = Column(String(255), unique=True, index=True, nullable=False)
-    password_hash = Column(String(255), nullable=False)
+    password_hash = Column(String(255), nullable=True)  # Nullable for OAuth users
+    google_id = Column(String(255), unique=True, nullable=True, index=True)
 
     resumes = relationship("Resume", back_populates="user", cascade="all, delete-orphan")
 
