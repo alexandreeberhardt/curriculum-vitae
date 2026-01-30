@@ -93,7 +93,7 @@
 
 % --- COLONNE GAUCHE ---
 \BLOCK{for section in sections}
-\BLOCK{if section.isVisible and section.type in ['summary', 'education', 'experiences', 'leadership', 'custom']}
+\BLOCK{if section.isVisible and section.has_content and section.type in ['summary', 'education', 'experiences', 'leadership', 'custom']}
 
 \cvsection{\VAR{section.title | escape_latex}}
 
@@ -181,7 +181,7 @@
 
 % --- COLONNE DROITE ---
 \BLOCK{for section in sections}
-\BLOCK{if section.isVisible and section.type in ['languages', 'skills', 'projects']}
+\BLOCK{if section.isVisible and section.has_content and section.type in ['languages', 'skills', 'projects']}
 
 \cvsection{\VAR{section.title | escape_latex}}
 

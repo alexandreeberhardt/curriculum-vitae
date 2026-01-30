@@ -180,8 +180,67 @@ VALID_TEMPLATES = {
     "double", "double_compact", "double_large",
 }
 
+# Variantes de taille pour l'auto-sizing
+SIZE_VARIANTS = ["large", "normal", "compact"]
+
 # Dossier des fichiers statiques (frontend buildé)
 STATIC_DIR = TEMPLATE_DIR / "static"
+
+
+def get_template_with_size(base_template: str, size: str) -> str:
+    """Retourne le nom du template avec le suffixe de taille approprié."""
+    if size == "normal":
+        return base_template
+    return f"{base_template}_{size}"
+
+
+def get_base_template(template_id: str) -> str:
+    """Extrait le template de base (sans suffixe de taille)."""
+    return template_id.replace("_compact", "").replace("_large", "")
+
+
+def generate_pdf_and_count_pages(data: ResumeData, template_id: str) -> tuple[Path, int, Path]:
+    """
+    Génère un PDF et retourne le chemin, le nombre de pages et le dossier temp.
+    Le dossier temp doit être nettoyé par l'appelant.
+    """
+    temp_dir = tempfile.mkdtemp(prefix="cv_")
+    temp_path = Path(temp_dir)
+
+    template_filename = f"{template_id}.tex"
+
+    # Copier le template
+    template_src = TEMPLATES_FOLDER / template_filename
+    if not template_src.exists():
+        template_src = TEMPLATES_FOLDER / f"{DEFAULT_TEMPLATE}.tex"
+    template_dst = temp_path / template_filename
+    shutil.copy(template_src, template_dst)
+
+    # Préparer les données
+    lang = data.lang if data.lang in ("fr", "en") else "fr"
+    render_data: Dict[str, Any] = {
+        "personal": data.personal.model_dump(),
+        "sections": [convert_section_items(s, lang) for s in data.sections],
+    }
+
+    # Rendre et compiler
+    renderer = LatexRenderer(temp_path, template_filename)
+    tex_content = renderer.render(render_data)
+    tex_file = temp_path / "main.tex"
+    tex_file.write_text(tex_content, encoding="utf-8")
+
+    compiler = PdfCompiler(tex_file)
+    compiler.compile(clean=True)
+
+    pdf_file = temp_path / "main.pdf"
+    if not pdf_file.exists():
+        raise RuntimeError("Échec de la génération du PDF")
+
+    # Compter les pages
+    reader = PdfReader(str(pdf_file))
+    page_count = len(reader.pages)
+
+    return pdf_file, page_count, temp_path
 
 
 def convert_section_items(section: CVSection, lang: str = "fr") -> Dict[str, Any]:
@@ -204,28 +263,46 @@ def convert_section_items(section: CVSection, lang: str = "fr") -> Dict[str, Any
         "isVisible": section.isVisible,
     }
 
-    # Traiter les items selon le type de section
+    # Traiter les items selon le type de section et déterminer has_content
+    has_content = False
+
     if section.type == "skills":
         # Skills est un dictionnaire
         if isinstance(section.items, dict):
             section_dict["content"] = section.items
+            # Vérifier si languages OU tools contiennent du contenu
+            has_content = bool(
+                (section.items.get("languages") or "").strip() or
+                (section.items.get("tools") or "").strip()
+            )
         elif hasattr(section.items, 'model_dump'):
-            section_dict["content"] = section.items.model_dump()
+            content = section.items.model_dump()
+            section_dict["content"] = content
+            has_content = bool(
+                (content.get("languages") or "").strip() or
+                (content.get("tools") or "").strip()
+            )
         else:
             section_dict["content"] = {"languages": "", "tools": ""}
+            has_content = False
     elif section.type in ("languages", "summary"):
         # Languages et Summary sont des strings
-        section_dict["content"] = str(section.items) if section.items else ""
+        content_str = str(section.items) if section.items else ""
+        section_dict["content"] = content_str
+        has_content = bool(content_str.strip())
     else:
-        # Les autres types sont des listes
+        # Les autres types sont des listes (education, experiences, projects, leadership, custom)
         if isinstance(section.items, list):
             section_dict["content"] = [
                 item.model_dump() if hasattr(item, 'model_dump') else item
                 for item in section.items
             ]
+            has_content = len(section.items) > 0
         else:
             section_dict["content"] = []
+            has_content = False
 
+    section_dict["has_content"] = has_content
     return section_dict
 
 
@@ -292,6 +369,78 @@ async def generate_cv(data: ResumeData):
         raise HTTPException(status_code=500, detail=f"Erreur de compilation LaTeX: {e}")
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Erreur inattendue: {e}")
+
+
+class OptimalSizeResponse(BaseModel):
+    """Réponse de l'endpoint optimal-size."""
+    optimal_size: str
+    template_id: str
+    tested_sizes: List[Dict[str, Any]]
+
+
+@app.post("/optimal-size", response_model=OptimalSizeResponse)
+async def find_optimal_size(data: ResumeData):
+    """
+    Trouve la taille optimale de template pour que le CV tienne sur une page.
+
+    Logique:
+    - Teste d'abord 'large' (plus d'espace)
+    - Si > 1 page, teste 'normal'
+    - Si > 1 page, utilise 'compact'
+
+    Returns:
+        OptimalSizeResponse avec la taille optimale et le template_id correspondant.
+    """
+    base_template = get_base_template(data.template_id)
+    tested_sizes = []
+    temp_dirs = []
+
+    try:
+        for size in SIZE_VARIANTS:  # ["large", "normal", "compact"]
+            template_id = get_template_with_size(base_template, size)
+
+            # Vérifier que le template existe
+            if template_id not in VALID_TEMPLATES:
+                continue
+
+            try:
+                pdf_file, page_count, temp_path = generate_pdf_and_count_pages(data, template_id)
+                temp_dirs.append(temp_path)
+
+                tested_sizes.append({
+                    "size": size,
+                    "template_id": template_id,
+                    "page_count": page_count
+                })
+
+                # Si le PDF tient sur une page, on a trouvé la taille optimale
+                if page_count == 1:
+                    return OptimalSizeResponse(
+                        optimal_size=size,
+                        template_id=template_id,
+                        tested_sizes=tested_sizes
+                    )
+            except Exception as e:
+                tested_sizes.append({
+                    "size": size,
+                    "template_id": template_id,
+                    "error": str(e)
+                })
+
+        # Si aucune taille ne permet de tenir sur une page, utiliser compact
+        return OptimalSizeResponse(
+            optimal_size="compact",
+            template_id=get_template_with_size(base_template, "compact"),
+            tested_sizes=tested_sizes
+        )
+
+    finally:
+        # Nettoyer tous les dossiers temporaires
+        for temp_dir in temp_dirs:
+            try:
+                shutil.rmtree(temp_dir)
+            except Exception:
+                pass
 
 
 @app.get("/default-data")
