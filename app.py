@@ -41,14 +41,36 @@ from api.resumes import router as resumes_router
 
 # === Modèles Pydantic ===
 
+class ProfessionalLink(BaseModel):
+    """Un lien professionnel (LinkedIn, GitHub, Portfolio, etc.)"""
+    platform: str = "linkedin"
+    username: str = ""
+    url: str = ""
+
+
 class PersonalInfo(BaseModel):
     name: str = ""
     title: Optional[str] = ""
     location: str = ""
     email: str = ""
     phone: str = ""
-    github: str = ""
-    github_url: str = ""
+    links: List[ProfessionalLink] = []
+    # Champs legacy pour la compatibilité ascendante
+    github: Optional[str] = None
+    github_url: Optional[str] = None
+
+    def model_post_init(self, __context):
+        """Migration silencieuse des anciennes données github vers links."""
+        # Si links est vide et github/github_url sont définis, migrer
+        if not self.links and (self.github or self.github_url):
+            self.links = [ProfessionalLink(
+                platform="github",
+                username=self.github or "",
+                url=self.github_url or ""
+            )]
+        # Nettoyer les champs legacy après migration
+        object.__setattr__(self, 'github', None)
+        object.__setattr__(self, 'github_url', None)
 
 
 class EducationItem(BaseModel):
@@ -353,8 +375,14 @@ Analyse le texte du CV fourni et retourne un JSON avec la structure exacte suiva
     "location": "Ville, Pays",
     "email": "email@example.com",
     "phone": "+33 6 12 34 56 78",
-    "github": "username",
-    "github_url": "https://github.com/username"
+    "links": [
+      {"platform": "linkedin", "username": "john-doe", "url": "https://linkedin.com/in/john-doe"},
+      {"platform": "github", "username": "johndoe", "url": "https://github.com/johndoe"},
+      {"platform": "portfolio", "username": "Mon Portfolio", "url": "https://johndoe.dev"},
+      {"platform": "behance", "username": "johndoe", "url": "https://behance.net/johndoe"},
+      {"platform": "website", "username": "Site Personnel", "url": "https://example.com"},
+      {"platform": "other", "username": "Autre Lien", "url": "https://..."}
+    ]
   },
   "sections": [
     {
@@ -412,6 +440,8 @@ Analyse le texte du CV fourni et retourne un JSON avec la structure exacte suiva
 }
 
 IMPORTANT:
+- "links" est un ARRAY de liens professionnels. Chaque lien a: platform (linkedin, github, portfolio, behance, website, other), username (texte affiché), url (lien complet)
+- N'ajoute que les liens présents dans le CV
 - Pour "skills", items est un OBJET avec "languages" et "tools" (pas un array)
 - Pour "languages", items est une STRING simple
 - Pour les autres types, items est un ARRAY d'objets
@@ -501,8 +531,14 @@ Analyse le texte du CV fourni et retourne un JSON avec la structure exacte suiva
     "location": "Ville, Pays",
     "email": "email@example.com",
     "phone": "+33 6 12 34 56 78",
-    "github": "username",
-    "github_url": "https://github.com/username"
+    "links": [
+      {"platform": "linkedin", "username": "john-doe", "url": "https://linkedin.com/in/john-doe"},
+      {"platform": "github", "username": "johndoe", "url": "https://github.com/johndoe"},
+      {"platform": "portfolio", "username": "Mon Portfolio", "url": "https://johndoe.dev"},
+      {"platform": "behance", "username": "johndoe", "url": "https://behance.net/johndoe"},
+      {"platform": "website", "username": "Site Personnel", "url": "https://example.com"},
+      {"platform": "other", "username": "Autre Lien", "url": "https://..."}
+    ]
   },
   "sections": [
     {
@@ -560,6 +596,8 @@ Analyse le texte du CV fourni et retourne un JSON avec la structure exacte suiva
 }
 
 IMPORTANT:
+- "links" est un ARRAY de liens professionnels. Chaque lien a: platform (linkedin, github, portfolio, behance, website, other), username (texte affiché), url (lien complet)
+- N'ajoute que les liens présents dans le CV
 - Pour "skills", items est un OBJET avec "languages" et "tools" (pas un array)
 - Pour "languages", items est une STRING simple
 - Pour les autres types, items est un ARRAY d'objets

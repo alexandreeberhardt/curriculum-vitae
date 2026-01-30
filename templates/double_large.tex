@@ -74,7 +74,7 @@
     \small
     \BLOCK{if personal.phone}\faPhone \ \VAR{personal.phone | escape_latex} \quad\BLOCK{endif}
     \BLOCK{if personal.email}\faEnvelope \ \VAR{personal.email | escape_latex} \quad\BLOCK{endif}
-    \BLOCK{if personal.github}\faLink \ \href{\VAR{personal.github_url | escape_latex}}{\VAR{personal.github | escape_latex}} \quad\BLOCK{endif}
+    \BLOCK{for link in personal.links}\BLOCK{if link.url and link.username}\faLink \ \href{\VAR{link.url | escape_latex}}{\VAR{link.username | escape_latex}} \quad\BLOCK{endif}\BLOCK{endfor}
     \BLOCK{if personal.location}\faMapMarker* \ \VAR{personal.location | escape_latex}\BLOCK{endif}
 \end{minipage}%
 \begin{minipage}[c]{0.25\textwidth}

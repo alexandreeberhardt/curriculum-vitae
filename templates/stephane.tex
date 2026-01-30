@@ -42,7 +42,7 @@
 \begin{center}
   {\Huge\textbf{\VAR{personal.name | escape_latex}}}\\[0.4em]
   \BLOCK{if personal.title}{\large\color{accentcolor} \VAR{personal.title | escape_latex}}\\[0.4em]\BLOCK{endif}
-  \BLOCK{if personal.github}\faGithub\ \href{\VAR{personal.github_url | escape_latex}}{\VAR{personal.github | escape_latex}} \quad\BLOCK{endif}
+  \BLOCK{for link in personal.links}\BLOCK{if link.url and link.username}\faLink\ \href{\VAR{link.url | escape_latex}}{\VAR{link.username | escape_latex}} \quad\BLOCK{endif}\BLOCK{endfor}
   \faPhone\ \VAR{personal.phone | escape_latex} \quad
   \faEnvelope\ \href{mailto:\VAR{personal.email}}{\VAR{personal.email | escape_latex}} \quad
   \faHome\ \VAR{personal.location | escape_latex}
