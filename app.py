@@ -2,6 +2,7 @@
 Backend FastAPI pour la génération de CV.
 Expose un endpoint POST /generate qui reçoit les données et retourne le PDF.
 Support des sections dynamiques et réorganisables.
+Authentification OAuth2 avec JWT.
 """
 import os
 import sys
@@ -29,6 +30,10 @@ from pypdf import PdfReader
 from core.LatexRenderer import LatexRenderer
 from core.PdfCompiler import PdfCompiler
 from translations import get_section_title
+
+# Authentication imports
+from auth.routes import router as auth_router
+from api.resumes import router as resumes_router
 
 
 # === Modèles Pydantic ===
@@ -131,6 +136,10 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Include authentication and API routers
+app.include_router(auth_router)
+app.include_router(resumes_router)
 
 # Chemin vers les templates
 TEMPLATE_DIR = Path(__file__).parent
