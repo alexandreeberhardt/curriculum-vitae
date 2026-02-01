@@ -422,5 +422,5 @@ async def generate_resume_pdf(
     return StreamingResponse(
         BytesIO(pdf_content),
         media_type="application/pdf",
-        headers={"Content-Disposition": f"attachment; filename={resume_name}.pdf"}
+        headers={"Content-Disposition": f"inline; filename={resume_name}.pdf"}
     )

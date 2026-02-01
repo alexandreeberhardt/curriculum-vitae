@@ -398,7 +398,7 @@ async def generate_cv(data: ResumeData):
     return StreamingResponse(
         BytesIO(pdf_content),
         media_type="application/pdf",
-        headers={"Content-Disposition": "attachment; filename=cv.pdf"}
+        headers={"Content-Disposition": "inline; filename=cv.pdf"}
     )
 
 
