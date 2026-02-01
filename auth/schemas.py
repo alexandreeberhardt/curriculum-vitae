@@ -55,3 +55,10 @@ class UserResponse(BaseModel):
     email: str
 
     model_config = {"from_attributes": True}
+
+
+class UserDataExport(BaseModel):
+    """Schema for GDPR data export (right to portability)."""
+    user: dict
+    resumes: list[dict]
+    exported_at: str

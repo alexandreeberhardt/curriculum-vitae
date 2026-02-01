@@ -12,10 +12,11 @@ from fastapi.responses import RedirectResponse
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 
-from auth.schemas import Token, UserCreate, UserResponse
+from auth.dependencies import CurrentUser
+from auth.schemas import Token, UserCreate, UserResponse, UserDataExport
 from auth.security import create_access_token, decode_access_token, get_password_hash, verify_password
 from database.db_config import get_db
-from database.models import User
+from database.models import User, Resume
 
 router = APIRouter(prefix="/api/auth", tags=["Authentication"])
 
@@ -307,3 +308,128 @@ async def exchange_oauth_code(code: str) -> Token:
         )
 
     return Token(access_token=jwt_token)
+
+
+# ============================================================================
+# GDPR Endpoints (Right to access, portability, erasure)
+# ============================================================================
+
+
+@router.get("/me", response_model=UserResponse)
+async def get_current_user_info(current_user: CurrentUser) -> User:
+    """Get current user information.
+
+    Args:
+        current_user: The authenticated user.
+
+    Returns:
+        User information.
+    """
+    return current_user
+
+
+@router.get("/me/export", response_model=UserDataExport)
+async def export_user_data(
+    current_user: CurrentUser,
+    db: Annotated[Session, Depends(get_db)],
+) -> UserDataExport:
+    """Export all user data (GDPR right to portability).
+
+    Returns all data associated with the user account in a portable format.
+
+    Args:
+        current_user: The authenticated user.
+        db: Database session.
+
+    Returns:
+        All user data including resumes.
+    """
+    # Get all user's resumes
+    resumes = db.query(Resume).filter(Resume.user_id == current_user.id).all()
+
+    return UserDataExport(
+        user={
+            "id": current_user.id,
+            "email": current_user.email,
+            "auth_method": "google" if current_user.google_id else "email",
+        },
+        resumes=[
+            {
+                "id": resume.id,
+                "name": resume.name,
+                "json_content": resume.json_content,
+                "created_at": resume.created_at.isoformat() if resume.created_at else None,
+            }
+            for resume in resumes
+        ],
+        exported_at=time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+    )
+
+
+def _extract_s3_key_from_url(s3_url: str) -> str | None:
+    """Extract S3 key from a full S3 URL.
+
+    Args:
+        s3_url: Full S3 URL like https://bucket.s3.region.amazonaws.com/path/to/file.pdf
+
+    Returns:
+        The S3 key (path/to/file.pdf) or None if URL format is invalid.
+    """
+    if not s3_url:
+        return None
+    try:
+        # URL format: https://bucket.s3.region.amazonaws.com/key
+        from urllib.parse import urlparse
+        parsed = urlparse(s3_url)
+        if parsed.path:
+            # Remove leading slash
+            return parsed.path.lstrip("/")
+    except Exception:
+        pass
+    return None
+
+
+@router.delete("/me", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_user_account(
+    current_user: CurrentUser,
+    db: Annotated[Session, Depends(get_db)],
+) -> None:
+    """Delete user account and all associated data (GDPR right to erasure).
+
+    This permanently deletes:
+    - User account
+    - All resumes (cascade delete)
+    - Associated S3 files
+
+    Args:
+        current_user: The authenticated user.
+        db: Database session.
+    """
+    # Get all user's resumes to delete S3 files
+    resumes = db.query(Resume).filter(Resume.user_id == current_user.id).all()
+
+    # Delete S3 files (best effort - don't fail if S3 deletion fails)
+    s3_keys_to_delete = []
+    for resume in resumes:
+        if resume.s3_url:
+            s3_key = _extract_s3_key_from_url(resume.s3_url)
+            if s3_key:
+                s3_keys_to_delete.append(s3_key)
+
+    if s3_keys_to_delete:
+        try:
+            from core.StorageManager import StorageManager
+            storage = StorageManager()
+            for s3_key in s3_keys_to_delete:
+                try:
+                    storage.delete_file(s3_key)
+                except Exception:
+                    # Log but don't fail - data deletion is more important
+                    pass
+        except Exception:
+            # S3 not configured or unavailable - continue with account deletion
+            pass
+
+    # Delete user (resumes are cascade deleted via FK relationship)
+    db.delete(current_user)
+    db.commit()
