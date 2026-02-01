@@ -2,6 +2,7 @@
 import os
 import secrets
 import time
+import uuid
 from datetime import timedelta
 from typing import Annotated
 from urllib.parse import urlencode
@@ -13,7 +14,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 
 from auth.dependencies import CurrentUser
-from auth.schemas import Token, UserCreate, UserResponse, UserDataExport
+from auth.schemas import Token, UserCreate, UserResponse, UserDataExport, GuestUpgrade
 from auth.security import create_access_token, decode_access_token, get_password_hash, verify_password
 from database.db_config import get_db
 from database.models import User, Resume
@@ -137,6 +138,95 @@ async def login(
     access_token = create_access_token(data={"sub": str(user.id), "email": user.email})
 
     return Token(access_token=access_token)
+
+
+@router.post("/guest", response_model=Token, status_code=status.HTTP_201_CREATED)
+async def create_guest_account(
+    db: Annotated[Session, Depends(get_db)],
+) -> Token:
+    """Create an anonymous guest account.
+
+    Creates a guest user with a unique guest email and returns a JWT token.
+    Guest accounts are limited to 3 resumes and can be upgraded to full accounts.
+
+    Args:
+        db: Database session.
+
+    Returns:
+        JWT access token with is_guest claim set to true.
+    """
+    # Generate unique guest email
+    guest_email = f"guest-{uuid.uuid4()}@guest.local"
+
+    # Create guest user (no password needed)
+    guest_user = User(
+        email=guest_email,
+        is_guest=True,
+        password_hash=None,
+    )
+
+    db.add(guest_user)
+    db.commit()
+    db.refresh(guest_user)
+
+    # Create access token with guest flag
+    access_token = create_access_token(
+        data={
+            "sub": str(guest_user.id),
+            "email": guest_user.email,
+            "is_guest": True,
+        }
+    )
+
+    return Token(access_token=access_token)
+
+
+@router.post("/upgrade", response_model=UserResponse)
+async def upgrade_guest_account(
+    upgrade_data: GuestUpgrade,
+    current_user: CurrentUser,
+    db: Annotated[Session, Depends(get_db)],
+) -> User:
+    """Upgrade a guest account to a permanent account.
+
+    Converts a guest account to a full account by adding email and password.
+    Only guest accounts can be upgraded.
+
+    Args:
+        upgrade_data: New email and password for the account.
+        current_user: The authenticated guest user.
+        db: Database session.
+
+    Returns:
+        The upgraded user.
+
+    Raises:
+        HTTPException: 400 if user is not a guest or email already exists.
+    """
+    # Verify this is a guest account
+    if not current_user.is_guest:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Only guest accounts can be upgraded",
+        )
+
+    # Check if email already exists
+    existing_user = db.query(User).filter(User.email == upgrade_data.email).first()
+    if existing_user:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Email already registered",
+        )
+
+    # Upgrade the account
+    current_user.email = upgrade_data.email
+    current_user.password_hash = get_password_hash(upgrade_data.password)
+    current_user.is_guest = False
+
+    db.commit()
+    db.refresh(current_user)
+
+    return current_user
 
 
 @router.get("/google/login")

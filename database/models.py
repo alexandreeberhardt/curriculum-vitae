@@ -1,7 +1,7 @@
 """SQLAlchemy models for the CV SaaS application."""
 from datetime import datetime, timezone
 
-from sqlalchemy import Column, DateTime, ForeignKey, Integer, String, Text
+from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Integer, String, Text
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import DeclarativeBase, relationship
 
@@ -19,6 +19,8 @@ class User(Base):
     email = Column(String(255), unique=True, index=True, nullable=False)
     password_hash = Column(String(255), nullable=True)  # Nullable for OAuth users
     google_id = Column(String(255), unique=True, nullable=True, index=True)
+    is_guest = Column(Boolean, default=False, nullable=False, index=True)
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
 
     resumes = relationship("Resume", back_populates="user", cascade="all, delete-orphan")
 

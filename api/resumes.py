@@ -23,6 +23,7 @@ router = APIRouter(prefix="/api/resumes", tags=["Resumes"])
 
 # SECURITY: Resource limits to prevent abuse
 MAX_RESUMES_PER_USER = 50
+MAX_RESUMES_PER_GUEST = 3
 MAX_JSON_CONTENT_SIZE = 100 * 1024  # 100 KB max for JSON content
 
 # Template configuration
@@ -119,8 +120,16 @@ async def create_resume(
         HTTPException: 429 if user has reached max resumes limit.
     """
     # SECURITY: Check if user has reached max resumes limit
+    # Guest accounts have a lower limit to encourage account creation
+    max_resumes = MAX_RESUMES_PER_GUEST if current_user.is_guest else MAX_RESUMES_PER_USER
     resume_count = db.query(Resume).filter(Resume.user_id == current_user.id).count()
-    if resume_count >= MAX_RESUMES_PER_USER:
+    if resume_count >= max_resumes:
+        if current_user.is_guest:
+            raise HTTPException(
+                status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+                detail=f"Guest accounts are limited to {MAX_RESUMES_PER_GUEST} resumes. "
+                       "Create a free account to save more resumes.",
+            )
         raise HTTPException(
             status_code=status.HTTP_429_TOO_MANY_REQUESTS,
             detail=f"Maximum number of resumes reached ({MAX_RESUMES_PER_USER}). "
