@@ -151,6 +151,7 @@ async def create_resume(
         max_resumes = MAX_RESUMES_PER_PREMIUM
     else:
         max_resumes = MAX_RESUMES_PER_USER
+    max_resumes += current_user.bonus_resumes
 
     resume_count = db.query(Resume).filter(Resume.user_id == current_user.id).count()
     if resume_count >= max_resumes:
@@ -408,6 +409,7 @@ async def generate_resume_pdf(
         max_downloads = MAX_DOWNLOADS_PER_PREMIUM
     else:
         max_downloads = MAX_DOWNLOADS_PER_USER
+    max_downloads += current_user.bonus_downloads
 
     current_downloads = _get_monthly_download_count(current_user, db)
     if current_downloads >= max_downloads:

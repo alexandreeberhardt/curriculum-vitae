@@ -4,7 +4,7 @@ import os
 import secrets
 import time
 import uuid
-from datetime import timedelta
+from datetime import UTC, datetime, timedelta
 from typing import Annotated
 from urllib.parse import urlencode
 
@@ -16,6 +16,8 @@ from sqlalchemy.orm import Session
 
 from auth.dependencies import CurrentUser
 from auth.schemas import (
+    FeedbackCreate,
+    FeedbackResponse,
     ForgotPasswordRequest,
     GuestUpgrade,
     ResetPasswordRequest,
@@ -32,7 +34,7 @@ from auth.security import (
 )
 from core.email import send_password_reset_email, send_welcome_email
 from database.db_config import get_db
-from database.models import Resume, User
+from database.models import Feedback, Resume, User
 
 router = APIRouter(prefix="/api/auth", tags=["Authentication"])
 
@@ -154,7 +156,12 @@ async def login(
 
     # Create access token with user ID as subject (must be string per JWT spec)
     access_token = create_access_token(
-        data={"sub": str(user.id), "email": user.email, "is_premium": user.is_premium}
+        data={
+            "sub": str(user.id),
+            "email": user.email,
+            "is_premium": user.is_premium,
+            "feedback_completed": bool(user.feedback_completed_at),
+        }
     )
 
     return Token(access_token=access_token)
@@ -391,7 +398,12 @@ async def google_callback(
 
     # Create JWT token
     jwt_token = create_access_token(
-        data={"sub": str(user.id), "email": user.email, "is_premium": user.is_premium}
+        data={
+            "sub": str(user.id),
+            "email": user.email,
+            "is_premium": user.is_premium,
+            "feedback_completed": bool(user.feedback_completed_at),
+        }
     )
 
     # SECURITY: Store token and redirect with temporary code instead of exposing JWT in URL
@@ -500,6 +512,76 @@ async def reset_password(
     db.commit()
 
     return {"message": "Password has been reset successfully."}
+
+
+# ============================================================================
+# Feedback Endpoint
+# ============================================================================
+
+FEEDBACK_BONUS_RESUMES = 3
+FEEDBACK_BONUS_DOWNLOADS = 5
+
+
+@router.post("/feedback", response_model=FeedbackResponse)
+async def submit_feedback(
+    feedback_data: FeedbackCreate,
+    current_user: CurrentUser,
+    db: Annotated[Session, Depends(get_db)],
+) -> FeedbackResponse:
+    """Submit user feedback and receive bonus limits.
+
+    Only registered (non-guest) users can submit feedback, once per account.
+
+    Args:
+        feedback_data: Feedback form data (rating, liked, improvement, source).
+        current_user: The authenticated user.
+        db: Database session.
+
+    Returns:
+        Bonus amounts awarded.
+
+    Raises:
+        HTTPException: 400 if user is a guest, 409 if already submitted.
+    """
+    if current_user.is_guest:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Guest accounts cannot submit feedback",
+        )
+
+    if current_user.feedback_completed_at is not None:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Feedback already submitted",
+        )
+
+    # Store feedback
+    feedback = Feedback(
+        user_id=current_user.id,
+        profile=feedback_data.profile,
+        target_sector=feedback_data.target_sector,
+        source=feedback_data.source,
+        ease_rating=feedback_data.ease_rating,
+        time_spent=feedback_data.time_spent,
+        obstacles=feedback_data.obstacles,
+        alternative=feedback_data.alternative,
+        suggestions=feedback_data.suggestions,
+        nps=feedback_data.nps,
+        future_help=feedback_data.future_help,
+    )
+    db.add(feedback)
+
+    # Award bonuses
+    current_user.feedback_completed_at = datetime.now(UTC)
+    current_user.bonus_resumes += FEEDBACK_BONUS_RESUMES
+    current_user.bonus_downloads += FEEDBACK_BONUS_DOWNLOADS
+    db.commit()
+
+    return FeedbackResponse(
+        message="Thank you for your feedback!",
+        bonus_resumes=FEEDBACK_BONUS_RESUMES,
+        bonus_downloads=FEEDBACK_BONUS_DOWNLOADS,
+    )
 
 
 # ============================================================================

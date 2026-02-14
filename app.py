@@ -391,6 +391,7 @@ async def generate_cv(
             max_downloads = MAX_DOWNLOADS_PER_PREMIUM
         else:
             max_downloads = MAX_DOWNLOADS_PER_USER
+        max_downloads += user.bonus_downloads
 
         current_downloads = _get_monthly_download_count(user, db)
         if current_downloads >= max_downloads:

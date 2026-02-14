@@ -61,6 +61,7 @@ class UserResponse(BaseModel):
     email: str
     is_guest: bool = False
     is_premium: bool = False
+    feedback_completed_at: str | None = None
 
     model_config = {"from_attributes": True}
 
@@ -115,6 +116,45 @@ class ResetPasswordRequest(BaseModel):
         if not re.search(f"[{re.escape(SPECIAL_CHARS)}]", v):
             raise ValueError("Password must contain at least one special character (!@#$%^&*...)")
         return v
+
+
+class FeedbackCreate(BaseModel):
+    """Schema for submitting feedback."""
+
+    profile: str | None = None
+    target_sector: str | None = None
+    source: str | None = None
+    ease_rating: int
+    time_spent: str | None = None
+    obstacles: str | None = None
+    alternative: str | None = None
+    suggestions: str | None = None
+    nps: int | None = None
+    future_help: str | None = None
+
+    @field_validator("ease_rating")
+    @classmethod
+    def validate_ease_rating(cls, v: int) -> int:
+        """Validate ease rating is between 1 and 10."""
+        if not 1 <= v <= 10:
+            raise ValueError("Ease rating must be between 1 and 10")
+        return v
+
+    @field_validator("nps")
+    @classmethod
+    def validate_nps(cls, v: int | None) -> int | None:
+        """Validate NPS is between 0 and 10."""
+        if v is not None and not 0 <= v <= 10:
+            raise ValueError("NPS must be between 0 and 10")
+        return v
+
+
+class FeedbackResponse(BaseModel):
+    """Schema for feedback submission response."""
+
+    message: str
+    bonus_resumes: int
+    bonus_downloads: int
 
 
 class UserDataExport(BaseModel):
