@@ -153,7 +153,9 @@ async def login(
         )
 
     # Create access token with user ID as subject (must be string per JWT spec)
-    access_token = create_access_token(data={"sub": str(user.id), "email": user.email})
+    access_token = create_access_token(
+        data={"sub": str(user.id), "email": user.email, "is_premium": user.is_premium}
+    )
 
     return Token(access_token=access_token)
 
@@ -388,7 +390,9 @@ async def google_callback(
         background_tasks.add_task(send_welcome_email, user.email)
 
     # Create JWT token
-    jwt_token = create_access_token(data={"sub": str(user.id), "email": user.email})
+    jwt_token = create_access_token(
+        data={"sub": str(user.id), "email": user.email, "is_premium": user.is_premium}
+    )
 
     # SECURITY: Store token and redirect with temporary code instead of exposing JWT in URL
     # This prevents the JWT from being logged in browser history, server logs, or referrer headers

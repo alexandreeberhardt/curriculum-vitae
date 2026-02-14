@@ -113,9 +113,9 @@ class TestResumeNameEdgeCases:
 
 
 class TestResumeLimits:
-    def test_regular_user_can_create_many_resumes(self, client):
+    def test_regular_user_can_create_up_to_3_resumes(self, client):
         token = create_authenticated_user(client)
-        for i in range(5):
+        for i in range(3):
             resp = client.post(
                 "/api/resumes",
                 json={"name": f"Resume {i}"},
@@ -123,21 +123,20 @@ class TestResumeLimits:
             )
             assert resp.status_code == 201
 
-    def test_guest_limited_to_3_resumes(self, client):
+    def test_guest_limited_to_1_resume(self, client):
         # Create guest
         resp = client.post("/api/auth/guest")
         assert resp.status_code == 201
         token = resp.json()["access_token"]
 
-        for i in range(3):
-            resp = client.post(
-                "/api/resumes",
-                json={"name": f"Guest Resume {i}"},
-                headers=auth_header(token),
-            )
-            assert resp.status_code == 201
+        resp = client.post(
+            "/api/resumes",
+            json={"name": "Guest Resume 0"},
+            headers=auth_header(token),
+        )
+        assert resp.status_code == 201
 
-        # 4th should fail
+        # 2nd should fail
         resp = client.post(
             "/api/resumes",
             json={"name": "Too many"},

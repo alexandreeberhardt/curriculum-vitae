@@ -25,7 +25,7 @@ import json
 import re
 
 import pdfplumber
-from fastapi import FastAPI, File, HTTPException, UploadFile
+from fastapi import Depends, FastAPI, File, HTTPException, Request, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
@@ -41,8 +41,17 @@ from translations import get_section_title
 MAX_CV_TEXT_LENGTH = 10_000
 
 # Authentication imports
-from api.resumes import router as resumes_router
+from api.resumes import (
+    MAX_DOWNLOADS_PER_GUEST,
+    MAX_DOWNLOADS_PER_PREMIUM,
+    MAX_DOWNLOADS_PER_USER,
+    _get_monthly_download_count,
+    router as resumes_router,
+)
 from auth.routes import router as auth_router
+from auth.security import decode_access_token
+from database.db_config import get_db
+from database.models import User
 
 # === Modèles Pydantic ===
 
@@ -345,16 +354,63 @@ def convert_section_items(section: CVSection, lang: str = "fr") -> dict[str, Any
 
 
 @app.post("/generate")
-async def generate_cv(data: ResumeData):
+async def generate_cv(
+    data: ResumeData,
+    request: Request,
+    db: Any = Depends(get_db),
+):
     """
     Génère un CV PDF à partir des données fournies.
 
     Args:
         data: Données du CV avec sections dynamiques.
+        request: HTTP request (for optional auth header).
+        db: Database session.
 
     Returns:
         FileResponse: Le fichier PDF généré.
     """
+    # Extract user from JWT if present (optional auth)
+    user = None
+    auth_header = request.headers.get("authorization", "")
+    if auth_header.startswith("Bearer "):
+        token = auth_header[7:]
+        payload = decode_access_token(token)
+        if payload and payload.get("sub"):
+            try:
+                user_id = int(payload["sub"])
+                user = db.query(User).filter(User.id == user_id).first()
+            except (ValueError, TypeError):
+                pass
+
+    # Enforce download limits
+    if user:
+        if user.is_guest:
+            max_downloads = MAX_DOWNLOADS_PER_GUEST
+        elif user.is_premium:
+            max_downloads = MAX_DOWNLOADS_PER_PREMIUM
+        else:
+            max_downloads = MAX_DOWNLOADS_PER_USER
+
+        current_downloads = _get_monthly_download_count(user, db)
+        if current_downloads >= max_downloads:
+            if user.is_guest:
+                raise HTTPException(
+                    status_code=429,
+                    detail=f"Guest accounts are limited to {MAX_DOWNLOADS_PER_GUEST} download per month. "
+                    "Create a free account to get more downloads.",
+                )
+            if user.is_premium:
+                raise HTTPException(
+                    status_code=429,
+                    detail=f"Monthly download limit reached ({MAX_DOWNLOADS_PER_PREMIUM}).",
+                )
+            raise HTTPException(
+                status_code=429,
+                detail=f"Monthly download limit reached ({MAX_DOWNLOADS_PER_USER}). "
+                "Upgrade to Premium to get more downloads.",
+            )
+
     # Créer un dossier temporaire pour la compilation
     temp_dir = tempfile.mkdtemp(prefix="cv_")
     temp_path = Path(temp_dir)
@@ -411,6 +467,11 @@ async def generate_cv(data: ResumeData):
             shutil.rmtree(temp_path)
         except Exception:
             pass
+
+    # Increment download counter after successful generation
+    if user:
+        user.download_count += 1
+        db.commit()
 
     # Return PDF from memory (temp files already cleaned up)
     from io import BytesIO

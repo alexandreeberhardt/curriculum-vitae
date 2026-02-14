@@ -60,6 +60,7 @@ class UserResponse(BaseModel):
     id: int
     email: str
     is_guest: bool = False
+    is_premium: bool = False
 
     model_config = {"from_attributes": True}
 

@@ -3,6 +3,7 @@
 import json
 import shutil
 import tempfile
+from datetime import UTC, datetime
 from io import BytesIO
 from pathlib import Path
 from typing import Annotated, Any
@@ -16,14 +17,18 @@ from auth.dependencies import CurrentUser
 from core.LatexRenderer import LatexRenderer
 from core.PdfCompiler import PdfCompiler
 from database.db_config import get_db
-from database.models import Resume
+from database.models import Resume, User
 from translations import get_section_title
 
 router = APIRouter(prefix="/api/resumes", tags=["Resumes"])
 
 # SECURITY: Resource limits to prevent abuse
-MAX_RESUMES_PER_USER = 50
-MAX_RESUMES_PER_GUEST = 3
+MAX_RESUMES_PER_GUEST = 1
+MAX_RESUMES_PER_USER = 3
+MAX_RESUMES_PER_PREMIUM = 100
+MAX_DOWNLOADS_PER_GUEST = 1
+MAX_DOWNLOADS_PER_USER = 3
+MAX_DOWNLOADS_PER_PREMIUM = 1000
 MAX_JSON_CONTENT_SIZE = 100 * 1024  # 100 KB max for JSON content
 
 # Template configuration
@@ -139,21 +144,31 @@ async def create_resume(
     Raises:
         HTTPException: 429 if user has reached max resumes limit.
     """
-    # SECURITY: Check if user has reached max resumes limit
-    # Guest accounts have a lower limit to encourage account creation
-    max_resumes = MAX_RESUMES_PER_GUEST if current_user.is_guest else MAX_RESUMES_PER_USER
+    # SECURITY: Check if user has reached max resumes limit per tier
+    if current_user.is_guest:
+        max_resumes = MAX_RESUMES_PER_GUEST
+    elif current_user.is_premium:
+        max_resumes = MAX_RESUMES_PER_PREMIUM
+    else:
+        max_resumes = MAX_RESUMES_PER_USER
+
     resume_count = db.query(Resume).filter(Resume.user_id == current_user.id).count()
     if resume_count >= max_resumes:
         if current_user.is_guest:
             raise HTTPException(
                 status_code=status.HTTP_429_TOO_MANY_REQUESTS,
-                detail=f"Guest accounts are limited to {MAX_RESUMES_PER_GUEST} resumes. "
+                detail=f"Guest accounts are limited to {MAX_RESUMES_PER_GUEST} resume. "
                 "Create a free account to save more resumes.",
+            )
+        if current_user.is_premium:
+            raise HTTPException(
+                status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+                detail=f"Maximum number of resumes reached ({MAX_RESUMES_PER_PREMIUM}).",
             )
         raise HTTPException(
             status_code=status.HTTP_429_TOO_MANY_REQUESTS,
             detail=f"Maximum number of resumes reached ({MAX_RESUMES_PER_USER}). "
-            "Please delete some resumes before creating new ones.",
+            "Upgrade to Premium to save more resumes.",
         )
 
     new_resume = Resume(
@@ -307,6 +322,29 @@ async def delete_resume(
     db.commit()
 
 
+def _get_monthly_download_count(user: User, db: Session) -> int:
+    """Get the user's download count for the current month, resetting if needed.
+
+    If the stored reset timestamp is from a previous month, reset the counter to 0.
+
+    Args:
+        user: The user to check.
+        db: Database session.
+
+    Returns:
+        Current monthly download count.
+    """
+    now = datetime.now(UTC)
+    reset_at = user.download_count_reset_at
+
+    if reset_at is None or (reset_at.year, reset_at.month) != (now.year, now.month):
+        user.download_count = 0
+        user.download_count_reset_at = now
+        db.flush()
+
+    return user.download_count
+
+
 def _convert_section_items(section: dict[str, Any], lang: str = "fr") -> dict[str, Any]:
     """Convert a section dict for LaTeX rendering.
 
@@ -363,6 +401,33 @@ async def generate_resume_pdf(
     Raises:
         HTTPException: 404 if resume not found, 400 if no content.
     """
+    # SECURITY: Enforce monthly download limits per tier
+    if current_user.is_guest:
+        max_downloads = MAX_DOWNLOADS_PER_GUEST
+    elif current_user.is_premium:
+        max_downloads = MAX_DOWNLOADS_PER_PREMIUM
+    else:
+        max_downloads = MAX_DOWNLOADS_PER_USER
+
+    current_downloads = _get_monthly_download_count(current_user, db)
+    if current_downloads >= max_downloads:
+        if current_user.is_guest:
+            raise HTTPException(
+                status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+                detail=f"Guest accounts are limited to {MAX_DOWNLOADS_PER_GUEST} download per month. "
+                "Create a free account to get more downloads.",
+            )
+        if current_user.is_premium:
+            raise HTTPException(
+                status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+                detail=f"Monthly download limit reached ({MAX_DOWNLOADS_PER_PREMIUM}).",
+            )
+        raise HTTPException(
+            status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+            detail=f"Monthly download limit reached ({MAX_DOWNLOADS_PER_USER}). "
+            "Upgrade to Premium to get more downloads.",
+        )
+
     resume = (
         db.query(Resume)
         .filter(
@@ -452,6 +517,10 @@ async def generate_resume_pdf(
             shutil.rmtree(temp_path)
         except Exception:
             pass
+
+    # Increment download counter after successful generation
+    current_user.download_count += 1
+    db.commit()
 
     # Return PDF from memory (temp files already cleaned up)
     return StreamingResponse(

@@ -51,14 +51,13 @@ class TestCreateResume:
         resp = client.post("/api/resumes", json={"name": "test"})
         assert resp.status_code == 401
 
-    def test_guest_limited_to_3_resumes(self, client):
+    def test_guest_limited_to_1_resume(self, client):
         token = client.post("/api/auth/guest").json()["access_token"]
         headers = auth_header(token)
-        for i in range(3):
-            resp = client.post("/api/resumes", json={"name": f"CV {i}"}, headers=headers)
-            assert resp.status_code == 201
-        # 4th should fail
-        resp = client.post("/api/resumes", json={"name": "CV 4"}, headers=headers)
+        resp = client.post("/api/resumes", json={"name": "CV 0"}, headers=headers)
+        assert resp.status_code == 201
+        # 2nd should fail
+        resp = client.post("/api/resumes", json={"name": "CV 1"}, headers=headers)
         assert resp.status_code == 429
 
 
