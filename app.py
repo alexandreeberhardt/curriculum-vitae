@@ -481,10 +481,13 @@ async def generate_cv(
     # Return PDF from memory (temp files already cleaned up)
     from io import BytesIO
 
+    name = data.personal.name.strip() if data.personal.name else ""
+    pdf_filename = f"{name.replace(' ', '_')}_CV.pdf" if name else "CV.pdf"
+
     return StreamingResponse(
         BytesIO(pdf_content),
         media_type="application/pdf",
-        headers={"Content-Disposition": "inline; filename=cv.pdf"},
+        headers={"Content-Disposition": f"inline; filename={pdf_filename}"},
     )
 
 
